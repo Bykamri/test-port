@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors */
+  --color-dark-navy: #070f2b;
+  --color-dark-navy-50: color-mix(in srgb, #070f2b 5%, white);
+  --color-dark-navy-100: color-mix(in srgb, #070f2b 10%, white);
+  --color-dark-navy-200: color-mix(in srgb, #070f2b 20%, white);
+  --color-dark-navy-300: color-mix(in srgb, #070f2b 30%, white);
+  --color-dark-navy-400: color-mix(in srgb, #070f2b 40%, white);
+  --color-dark-navy-500: #070f2b;
+  --color-dark-navy-600: color-mix(in srgb, #070f2b 85%, black);
+  --color-dark-navy-700: color-mix(in srgb, #070f2b 70%, black);
+  --color-dark-navy-800: color-mix(in srgb, #070f2b 55%, black);
+  --color-dark-navy-900: color-mix(in srgb, #070f2b 40%, black);
+
+  --color-navy-blue: #1b1a55;
+  --color-navy-blue-50: color-mix(in srgb, #1b1a55 5%, white);
+  --color-navy-blue-100: color-mix(in srgb, #1b1a55 10%, white);
+  --color-navy-blue-200: color-mix(in srgb, #1b1a55 20%, white);
+  --color-navy-blue-300: color-mix(in srgb, #1b1a55 30%, white);
+  --color-navy-blue-400: color-mix(in srgb, #1b1a55 40%, white);
+  --color-navy-blue-500: #1b1a55;
+  --color-navy-blue-600: color-mix(in srgb, #1b1a55 85%, black);
+  --color-navy-blue-700: color-mix(in srgb, #1b1a55 70%, black);
+  --color-navy-blue-800: color-mix(in srgb, #1b1a55 55%, black);
+  --color-navy-blue-900: color-mix(in srgb, #1b1a55 40%, black);
+
+  --color-slate-blue: #535c91;
+  --color-slate-blue-50: color-mix(in srgb, #535c91 5%, white);
+  --color-slate-blue-100: color-mix(in srgb, #535c91 10%, white);
+  --color-slate-blue-200: color-mix(in srgb, #535c91 20%, white);
+  --color-slate-blue-300: color-mix(in srgb, #535c91 30%, white);
+  --color-slate-blue-400: color-mix(in srgb, #535c91 40%, white);
+  --color-slate-blue-500: #535c91;
+  --color-slate-blue-600: color-mix(in srgb, #535c91 85%, black);
+  --color-slate-blue-700: color-mix(in srgb, #535c91 70%, black);
+  --color-slate-blue-800: color-mix(in srgb, #535c91 55%, black);
+  --color-slate-blue-900: color-mix(in srgb, #535c91 40%, black);
+
+  --color-lavender: #9290c3;
+  --color-lavender-50: color-mix(in srgb, #9290c3 5%, white);
+  --color-lavender-100: color-mix(in srgb, #9290c3 10%, white);
+  --color-lavender-200: color-mix(in srgb, #9290c3 20%, white);
+  --color-lavender-300: color-mix(in srgb, #9290c3 30%, white);
+  --color-lavender-400: color-mix(in srgb, #9290c3 40%, white);
+  --color-lavender-500: #9290c3;
+  --color-lavender-600: color-mix(in srgb, #9290c3 85%, black);
+  --color-lavender-700: color-mix(in srgb, #9290c3 70%, black);
+  --color-lavender-800: color-mix(in srgb, #9290c3 55%, black);
+  --color-lavender-900: color-mix(in srgb, #9290c3 40%, black);
+
+  /* Status Colors */
+  --color-success: #22c55e;
+  --color-success-50: color-mix(in srgb, #22c55e 5%, white);
+  --color-success-100: color-mix(in srgb, #22c55e 10%, white);
+  --color-success-200: color-mix(in srgb, #22c55e 20%, white);
+  --color-success-300: color-mix(in srgb, #22c55e 30%, white);
+  --color-success-400: color-mix(in srgb, #22c55e 40%, white);
+  --color-success-500: #22c55e;
+  --color-success-600: color-mix(in srgb, #22c55e 85%, black);
+  --color-success-700: color-mix(in srgb, #22c55e 70%, black);
+  --color-success-800: color-mix(in srgb, #22c55e 55%, black);
+  --color-success-900: color-mix(in srgb, #22c55e 40%, black);
+
+  --color-error: #ef4444;
+  --color-error-50: color-mix(in srgb, #ef4444 5%, white);
+  --color-error-100: color-mix(in srgb, #ef4444 10%, white);
+  --color-error-200: color-mix(in srgb, #ef4444 20%, white);
+  --color-error-300: color-mix(in srgb, #ef4444 30%, white);
+  --color-error-400: color-mix(in srgb, #ef4444 40%, white);
+  --color-error-500: #ef4444;
+  --color-error-600: color-mix(in srgb, #ef4444 85%, black);
+  --color-error-700: color-mix(in srgb, #ef4444 70%, black);
+  --color-error-800: color-mix(in srgb, #ef4444 55%, black);
+  --color-error-900: color-mix(in srgb, #ef4444 40%, black);
+
+  --color-warning: #f59e0b;
+  --color-warning-50: color-mix(in srgb, #f59e0b 5%, white);
+  --color-warning-100: color-mix(in srgb, #f59e0b 10%, white);
+  --color-warning-200: color-mix(in srgb, #f59e0b 20%, white);
+  --color-warning-300: color-mix(in srgb, #f59e0b 30%, white);
+  --color-warning-400: color-mix(in srgb, #f59e0b 40%, white);
+  --color-warning-500: #f59e0b;
+  --color-warning-600: color-mix(in srgb, #f59e0b 85%, black);
+  --color-warning-700: color-mix(in srgb, #f59e0b 70%, black);
+  --color-warning-800: color-mix(in srgb, #f59e0b 55%, black);
+  --color-warning-900: color-mix(in srgb, #f59e0b 40%, black);
+}
+
+.prose img {
+  border-radius: 30px;
+}
+
+#sun {
+  transform: translate3d(0, 0px, 0);
+}
+
+#moon {
+  transform: translate3d(0, 0px, 0);
+}
+
+#darkToggle:hover #sun {
+  transform: translate3d(0, 10px, 0);
+}
+
+#darkToggle:hover #moon {
+  transform: translate3d(0, 10px, 0);
+}
+
+html.dark #darkToggle:hover .horizon {
+  border-color: #718096 !important;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+.horizon .setting {
+  animation: 1s ease 0s 1 setting;
+}
+
+.horizon .rising {
+  animation: 1s ease 0s 1 rising;
+}
+
+@keyframes setting {
+  0% {
+    transform: translate3d(0, 10px, 0);
+  }
+
+  40% {
+    transform: translate3d(0, -2px, 0);
+  }
+
+  to {
+    transform: translate3d(0, 30px, 0);
+  }
+}
+
+@keyframes rising {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translate3d(0, -2px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 10, 0);
+  }
+}

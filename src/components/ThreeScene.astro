@@ -1,0 +1,272 @@
+<div id="three-container" class="absolute inset-0">
+  <canvas id="three-canvas" class="w-full h-full"></canvas>
+  <div
+    id="loading-indicator"
+    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm md:text-base"
+  >
+    Loading model...
+  </div>
+</div>
+
+<style>
+  #three-container {
+    transition: height 0.3s ease;
+    transform: translateZ(0);
+    will-change: transform;
+  }
+</style>
+
+<script>
+  import * as THREE from "three";
+  import type { Scene, PerspectiveCamera, WebGLRenderer } from "three";
+  import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+  import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
+
+  class SceneManager {
+    private container: HTMLElement;
+    private canvas: HTMLCanvasElement;
+    private scene: Scene;
+    private camera: PerspectiveCamera;
+    private renderer: WebGLRenderer;
+    private controls: OrbitControls;
+    private loader: GLTFLoader;
+    private model: THREE.Group | null = null;
+    private mouse = { x: 0, y: 0 };
+    private targetRotation = { x: 0, y: 0 };
+    private currentRotation = { x: 0, y: 0 };
+    private bounds: DOMRect;
+    private resizeTimeout: number | null = null;
+    private lastWidth: number = 0;
+    private lastHeight: number = 0;
+
+    constructor() {
+      const container = document.getElementById("three-container");
+      const canvas = document.getElementById("three-canvas");
+
+      if (!container || !canvas || !(canvas instanceof HTMLCanvasElement)) {
+        throw new Error("Required elements not found");
+      }
+
+      this.container = container;
+      this.canvas = canvas;
+      this.bounds = container.getBoundingClientRect();
+      this.lastWidth = this.bounds.width;
+      this.lastHeight = this.bounds.height;
+
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(
+        75,
+        this.bounds.width / this.bounds.height,
+        0.1,
+        1000
+      );
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: this.canvas,
+        antialias: true,
+        alpha: true,
+      });
+
+      this.controls = new OrbitControls(this.camera, this.canvas);
+      this.loader = new GLTFLoader();
+
+      this.init();
+    }
+
+    private calculateResponsiveValues(): {
+      cameraZ: number;
+      modelScale: number;
+    } {
+      const width = window.innerWidth;
+      return {
+        cameraZ: 5.5,
+        modelScale: 3.6,
+      };
+    }
+
+    private init(): void {
+      const { cameraZ } = this.calculateResponsiveValues();
+
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      this.renderer.setSize(this.bounds.width, this.bounds.height);
+      this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+      this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+      this.camera.position.z = cameraZ;
+      this.camera.position.y = 1;
+
+      this.controls.enabled = false;
+      this.controls.enableDamping = true;
+      this.controls.dampingFactor = 0.05;
+
+      const ambientLight = new THREE.AmbientLight(0x9290c3, 0.7);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      directionalLight.position.set(5, 5, 5);
+
+      this.scene.add(ambientLight);
+      this.scene.add(directionalLight);
+
+      this.addEventListeners();
+      this.loadModel();
+
+      window.addEventListener("scroll", () => {}, { passive: true });
+    }
+
+    private addEventListeners(): void {
+      document.addEventListener("mousemove", this.onMouseMove.bind(this));
+      window.addEventListener("resize", this.onWindowResize.bind(this));
+    }
+
+    private onMouseMove(event: MouseEvent): void {
+      const rect = this.container.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      this.targetRotation.y = -x * Math.PI * 0.25;
+      this.targetRotation.x = y * Math.PI * 0.15;
+    }
+
+    private onWindowResize(): void {
+      if (this.resizeTimeout) {
+        window.clearTimeout(this.resizeTimeout);
+      }
+
+      const newBounds = this.container.getBoundingClientRect();
+
+      if (newBounds.width !== this.lastWidth) {
+        this.resizeTimeout = window.setTimeout(() => {
+          this.bounds = this.container.getBoundingClientRect();
+          const { cameraZ, modelScale } = this.calculateResponsiveValues();
+
+          this.camera.position.z = cameraZ;
+          this.camera.aspect = this.bounds.width / this.bounds.height;
+          this.camera.updateProjectionMatrix();
+
+          if (this.model) {
+            const box = new THREE.Box3().setFromObject(this.model);
+            const size = box.getSize(new THREE.Vector3());
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const scale = modelScale / maxDim;
+            this.model.scale.setScalar(scale);
+          }
+
+          this.renderer.setSize(this.bounds.width, this.bounds.height);
+
+          this.lastWidth = this.bounds.width;
+          this.lastHeight = this.bounds.height;
+        }, 150);
+      }
+    }
+
+    private loadModel(): void {
+      const loadingIndicator = document.getElementById("loading-indicator");
+      const { modelScale } = this.calculateResponsiveValues();
+
+      this.loader.load(
+        "/scene.gltf",
+        (gltf: GLTF) => {
+          this.model = gltf.scene;
+
+          const box = new THREE.Box3().setFromObject(this.model);
+          const center = box.getCenter(new THREE.Vector3());
+          this.model.position.sub(center);
+
+          const size = box.getSize(new THREE.Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const baseScale = 1.0;
+          const scale = (modelScale * baseScale) / maxDim;
+          this.model.scale.multiplyScalar(scale);
+
+          this.scene.add(this.model);
+
+          if (loadingIndicator) {
+            loadingIndicator.style.display = "none";
+          }
+
+          this.animate();
+        },
+        (progress: ProgressEvent) => {
+          const percent = (progress.loaded / (progress.total || 1)) * 100;
+          if (loadingIndicator) {
+            loadingIndicator.textContent = `Loading model... ${Math.round(percent)}%`;
+          }
+        },
+        (error: unknown) => {
+          console.error("Error loading model:", error);
+          if (loadingIndicator) {
+            loadingIndicator.textContent = "Error loading model";
+          }
+        }
+      );
+    }
+
+    private updateModelRotation(): void {
+      if (!this.model) return;
+
+      const rotationSpeed = 0.1;
+
+      this.currentRotation.x +=
+        (this.targetRotation.x - this.currentRotation.x) * rotationSpeed;
+      this.currentRotation.y +=
+        (this.targetRotation.y - this.currentRotation.y) * rotationSpeed;
+
+      this.model.rotation.x = this.currentRotation.x;
+      this.model.rotation.y = this.currentRotation.y;
+
+      const time = Date.now() * 0.001;
+      this.model.position.y = Math.sin(time) * 0.1;
+    }
+
+    private animate = (): void => {
+      requestAnimationFrame(this.animate);
+      this.updateModelRotation();
+      this.renderer.render(this.scene, this.camera);
+    };
+
+    public dispose(): void {
+      if (this.resizeTimeout) {
+        window.clearTimeout(this.resizeTimeout);
+      }
+
+      document.removeEventListener("mousemove", this.onMouseMove.bind(this));
+      window.removeEventListener("resize", this.onWindowResize.bind(this));
+
+      this.controls.dispose();
+      this.renderer.dispose();
+
+      if (this.model) {
+        this.scene.remove(this.model);
+      }
+
+      this.scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          object.geometry.dispose();
+          if (object.material instanceof THREE.Material) {
+            object.material.dispose();
+          } else if (Array.isArray(object.material)) {
+            object.material.forEach((material) => material.dispose());
+          }
+        }
+      });
+    }
+  }
+
+  let sceneManager: SceneManager | null = null;
+
+  function initScene(): void {
+    if (sceneManager) {
+      sceneManager.dispose();
+    }
+    sceneManager = new SceneManager();
+  }
+
+  document.addEventListener("astro:page-load", initScene);
+  document.addEventListener("DOMContentLoaded", initScene);
+
+  document.addEventListener("astro:before-preparation", () => {
+    if (sceneManager) {
+      sceneManager.dispose();
+      sceneManager = null;
+    }
+  });
+</script>

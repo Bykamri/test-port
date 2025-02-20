@@ -1,0 +1,56 @@
+---
+const statuses = [
+  {
+    type: "success",
+    title: "Success Status",
+    message: "Operation completed successfully",
+    icon: "✓",
+    bg: "bg-success-900/20",
+    border: "border-success-500",
+    text: "text-success-400",
+  },
+  {
+    type: "error",
+    title: "Error Status",
+    message: "Something went wrong",
+    icon: "×",
+    bg: "bg-error-900/20",
+    border: "border-error-500",
+    text: "text-error-400",
+  },
+  {
+    type: "warning",
+    title: "Warning Status",
+    message: "Please review before proceeding",
+    icon: "!",
+    bg: "bg-warning-900/20",
+    border: "border-warning-500",
+    text: "text-warning-400",
+  },
+];
+---
+
+<section class="py-20">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-lavender mb-12">
+      Status Indicators
+    </h2>
+    <div class="max-w-3xl mx-auto space-y-4">
+      {
+        statuses.map((status) => (
+          <div class={`${status.bg} border ${status.border} p-4 rounded-lg`}>
+            <div class="flex items-center gap-3">
+              <div class={`${status.text} text-xl font-bold`}>
+                {status.icon}
+              </div>
+              <div>
+                <h3 class="font-semibold text-white">{status.title}</h3>
+                <p class={status.text}>{status.message}</p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

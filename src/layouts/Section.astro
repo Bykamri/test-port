@@ -1,0 +1,29 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+}
+
+const { title, subtitle } = Astro.props;
+---
+
+<section class="bg-dark-navy text-white py-20">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-6xl font-bold mb-6">{title}</h1>
+      <p class="text-xl text-lavender-300">{subtitle}</p>
+      <div class="mt-10 flex gap-4 justify-center">
+        <button
+          class="bg-slate-blue hover:bg-slate-blue-600 px-8 py-3 rounded-lg font-medium"
+        >
+          Get Started
+        </button>
+        <button
+          class="border-2 border-lavender hover:bg-lavender hover:bg-opacity-20 px-8 py-3 rounded-lg font-medium"
+        >
+          Learn More
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

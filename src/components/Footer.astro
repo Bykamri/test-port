@@ -1,0 +1,30 @@
+---
+const currentYear = new Date().getFullYear();
+const footerLinks = [
+  { name: "Privacy", href: "/privacy" },
+  { name: "Terms", href: "/terms" },
+  { name: "Contact", href: "/contact" },
+];
+---
+
+<footer class="border-t border-navy-blue-400 py-8 mt-20">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <div class="text-slate-blue-200 mb-4 md:mb-0">
+        © {currentYear} Your Company. All rights reserved.
+      </div>
+      <div class="flex space-x-6">
+        {
+          footerLinks.map((link) => (
+            <a
+              href={link.href}
+              class="text-slate-blue-200 hover:text-lavender transition-colors"
+            >
+              {link.name}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>
